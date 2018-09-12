@@ -10,7 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    // MARK: - View Lifecycle
+    var isDefaultStatusBar = true
+    //Outlets
     
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -27,6 +28,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var totalAmountLabel: UILabel!
     
     @IBOutlet weak var resetButton: UIButton!
+    
+    
+    //Functions
     
     func calculate () {
         
@@ -72,16 +76,69 @@ class ViewController: UIViewController {
     func clear() {
         
         self.billAmountTextField.text = nil
-        self.tipAmountLabel.text = "0.00"
-        self.totalAmountLabel.text = "0.00"
+        self.tipAmountLabel.text = "0.00 zł"
+        self.totalAmountLabel.text = "0.00 zł"
         self.tipPercentSegmentedControl.selectedSegmentIndex = 0
         
         
     }
     
+    func setUpViews() {
+        
+        headerView.layer.shadowOffset = CGSize(width: 0, height: 1)
+        headerView.layer.shadowOpacity = 0.05
+        headerView.layer.shadowColor = UIColor.black.cgColor
+        headerView.layer.shadowRadius = 35
+        
+        inputCardView.layer.cornerRadius = 8
+        inputCardView.layer.masksToBounds = true  //Zapobiega to wyświetlaniu treści naszego widoku poza granicą zaokrąglonego narożnika.
+        
+        outputCardView.layer.cornerRadius = 8
+        outputCardView.layer.masksToBounds = true
+        outputCardView.layer.borderWidth = 1
+        outputCardView.layer.borderColor = UIColor.tcHotPink.cgColor
+        
+        resetButton.layer.cornerRadius = 8
+        resetButton.layer.masksToBounds = true
+        
+    }
+    
+    func setTheme(isDark: Bool) {
+        
+        let theme = isDark ? ColorTheme.dark : ColorTheme.light
+        
+        view.backgroundColor = theme.viewControllerBackgroundColor
+        
+        headerView.backgroundColor = theme.primaryColor
+        titleLabel.textColor = theme.primaryTextColor
+        
+        inputCardView.backgroundColor = theme.secondaryColor
+        
+        billAmountTextField.tintColor = theme.accentColor
+        tipPercentSegmentedControl.tintColor = theme.accentColor
+        
+        outputCardView.backgroundColor = theme.primaryColor
+        outputCardView.layer.borderColor = theme.accentColor.cgColor
+        
+        tipAmountTitleLabel.textColor = theme.primaryTextColor
+        totalAmountTitleLabel.textColor = theme.primaryTextColor
+        
+        tipAmountLabel.textColor = theme.outputTextColor
+        totalAmountLabel.textColor = theme.outputTextColor
+        
+        resetButton.backgroundColor = theme.secondaryColor
+        
+        isDefaultStatusBar = theme.isDefaultStatusBar
+        setNeedsStatusBarAppearanceUpdate()
+        
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setUpViews()
+        setTheme(isDark: false)
         billAmountTextField.calculateButtonAction = {
             
             self.calculate()
@@ -91,8 +148,15 @@ class ViewController: UIViewController {
         
     }
     
-
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return isDefaultStatusBar ? .default : .lightContent
+    }
+    
+    //Actions
+    
     @IBAction func toggleSwitch(_ sender: UISwitch) {
+        
+        setTheme(isDark: sender.isOn)
         
         if sender.isOn {
             
@@ -108,8 +172,7 @@ class ViewController: UIViewController {
     
     @IBAction func resetButtonTapped(_ sender: UIButton) {
         
-            clear()
-        
+        clear()
         
     }
     
@@ -122,7 +185,6 @@ class ViewController: UIViewController {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
        
             self.view.endEditing(true)
-         
         
     }
     
