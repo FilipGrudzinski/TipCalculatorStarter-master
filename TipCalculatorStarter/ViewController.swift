@@ -149,7 +149,7 @@ class ViewController: UIViewController {
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return isDefaultStatusBar ? .default : .lightContent
+        return isDefaultStatusBar ? .default : .lightContent  //Our preferredStatusBarStyle property is inherited from our super class and can't be set directly. Because of this, we need our isDefaultStatusBar variable to keep track of which status bar style preferredStatusBarStyle should display.
     }
     
     //Actions
